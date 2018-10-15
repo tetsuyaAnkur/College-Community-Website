@@ -65,22 +65,22 @@
 <body ng-app="StrengthValidationApp" ng-controller="StrengthValidationCtrl">
 	<div class="login">
 	<h1>Signup</h1>
-	<form name="myform" method="post" name="myform">
-		<input required="true" autofocus="true" type="text" placeholder="Enter your First-name" name="myfname"/>
-		<input required="true" autofocus="true" type="text" placeholder="Enter your Last-name" name="mylname"/>
-		<input required="true" autofocus="true" type="email" placeholder="Enter your Email-id" name="myaddr" ng-model="mail"/><span ng-show="myform.myaddr.$error.email"/>Not a valid e-mail address</span>
-		 <input required="true" type="{{ typePassword ? 'text' : 'password' }}" name="password" placeholder="Enter your Password" ng-style="checkpwdStrength" ng-model="userPassword" ng-change="validationInputPwdText(userPassword)"/>
+	<form name="myform" name="myform">
+		<input ng-model="fname" required="true" autofocus="true" type="text" placeholder="Enter your First-name" name="myfname"/>
+		<input ng-model="lname" required="true" autofocus="true" type="text" placeholder="Enter your Last-name" name="mylname"/>
+		<input ng-model="email" required="true" autofocus="true" type="email" placeholder="Enter your Email-id" name="myaddr" ng-model="mail"/><span ng-show="myform.myaddr.$error.email"/>Not a valid e-mail address</span>
+		 <input ng-model="pass" required="true" type="{{ typePassword ? 'text' : 'password' }}" name="password" placeholder="Enter your Password" ng-style="checkpwdStrength" ng-model="userPassword" ng-change="validationInputPwdText(userPassword)"/>
 		<br><br>
 		<button class="btn btn-primary btn-block btn-large" ng-click="togglePassword()"><span>{{ typePassword ? 'Hide' : 'Show' }}</span> Password</button>
 		<br><br>
-		<button ng-disabled="myform.$invalid" ng-model="signup" type="submit" class="btn btn-primary btn-block btn-large">Signup</button>
+		<button ng-disabled="myform.$invalid" ng-click="savestuff(fname, lname, email, pass);" ng-model="signup" type="submit" class="btn btn-primary btn-block btn-large">Signup</button>
 		<p style="font-size: 100%;color: black;text-align: center;"> Already registered ? <a href="login.html" style="color: black;">Login</a> </p>  
 	</form>
 	</div>
 </body>
 <script>
 	var app = angular.module("StrengthValidationApp", []);
-    app.controller("StrengthValidationCtrl", function($scope) {
+    app.controller("StrengthValidationCtrl", function($http, $scope) {
 
       var strongRegularExp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
       var mediumRegularExp = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -102,6 +102,21 @@
 
       $scope.togglePassword = function () { 
       	$scope.typePassword = !$scope.typePassword; 
+      };
+
+      $scope.savestuff = function(fname, lname, email, password){
+
+		var data={
+		name : fname,
+		lname : lname,
+				email : email,
+				pass : password
+			};
+
+			console.log(data);
+			$http.post("/apisave", data);
+			
+		
       };
 
     });

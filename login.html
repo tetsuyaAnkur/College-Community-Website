@@ -65,21 +65,22 @@
 <body ng-app="StrengthValidationApp" ng-controller="StrengthValidationCtrl">
 	<div class="login">
 	<h1>Login</h1>
-	<form name="myform" method="post" name="myform">
-		<input required="true" autofocus="true" type="email" placeholder="Enter your Email-id" name="myaddr" ng-model="mail"/><span ng-show="myform.myaddr.$error.email"/>Not a valid e-mail address</span>
+	<form name="myform" name="myform">
+		<input ng-model="emailaddr" required="true" autofocus="true" type="email" placeholder="Enter your Email-id" name="myaddr" ng-model="mail"/><span ng-show="myform.myaddr.$error.email"/>Not a valid e-mail address</span>
 		<br><br>
-		 <input required="true" type="{{ typePassword ? 'text' : 'password' }}" name="password" placeholder="Enter your Password" ng-style="checkpwdStrength" ng-model="userPassword" ng-change="validationInputPwdText(userPassword)"/>
+		 <input ng-model="password" required="true" type="{{ typePassword ? 'text' : 'password' }}" name="password" placeholder="Enter your Password" ng-style="checkpwdStrength" ng-model="userPassword" ng-change="validationInputPwdText(userPassword)"/>
 		<br><br>
 		<button class="btn btn-primary btn-block btn-large" ng-click="togglePassword()"><span>{{ typePassword ? 'Hide' : 'Show' }}</span> Password</button>
 		<br><br>
-		<button ng-disabled="myform.$invalid" ng-model="login" type="submit" class="btn btn-primary btn-block btn-large">Login</button>
+		<p>{{message.data}}</p>
+		<button ng-disabled="myform.$invalid" ng-model="login" ng-click="checkcred(emailaddr, password);" class="btn btn-primary btn-block btn-large">Login</button>
 		<p style="font-size: 100%;color: black;text-align: center;"> New User ? <a href="signup.html" style="color: black;">Signup</a> </p>
 	</form>
 	</div>
 </body>
 <script>
 	var app = angular.module("StrengthValidationApp", []);
-    app.controller("StrengthValidationCtrl", function($scope) {
+    app.controller("StrengthValidationCtrl", function($http, $scope) {
 
       var strongRegularExp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
       var mediumRegularExp = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -101,6 +102,23 @@
 
       $scope.togglePassword = function () { 
       	$scope.typePassword = !$scope.typePassword; 
+      };
+
+      $scope.checkcred = function(emailaddr, password){
+
+		var data={
+		
+			email : emailaddr,
+			pass : password
+			};
+
+			console.log(data);
+			$http.post("/api/verify", data)
+			.then(function(message){
+				$scope.message = message;
+			});
+			
+		
       };
 
     });
